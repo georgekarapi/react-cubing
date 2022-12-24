@@ -14,8 +14,11 @@ const randomAlg = (steps: number) => {
 
 const TwistyPlayer = ({ steps, percentage }: TwistyConfig) => {
   const [timeRange, setTimeRange] = useState({ start: 0, end: 1000 });
-  const [twisty] = useState<TP>(
-    new TP({
+  const [twisty, setTwisty] = useState<null | TP>();
+  const twistyRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    const twistyTemp = new TP({
       background: 'none',
       hintFacelets: 'none',
       experimentalDragInput: 'none',
@@ -23,17 +26,11 @@ const TwistyPlayer = ({ steps, percentage }: TwistyConfig) => {
       alg: randomAlg(steps),
       visualization: 'PG3D',
       controlPanel: 'none',
-      cameraLongitude: 90,
-    })
-  );
-  const twistyRef = useRef<HTMLDivElement | null>(null);
-
-  useEffect(() => {
-    if (twisty) {
-      twisty.experimentalModel.timeRange.get().then((e) => setTimeRange(e));
-      twistyRef.current?.appendChild(twisty);
-    }
-  }, [twisty]);
+    });
+    twistyTemp.experimentalModel.timeRange.get().then((e) => setTimeRange(e));
+    twistyRef.current?.appendChild(twistyTemp);
+    setTwisty(twistyTemp);
+  }, []);
 
   useEffect(() => {
     if (twisty) {

@@ -7,24 +7,23 @@ const randomAlg = (steps) => {
 };
 const TwistyPlayer = ({ steps, percentage }) => {
     const [timeRange, setTimeRange] = useState({ start: 0, end: 1000 });
-    const [twisty] = useState(new TP({
-        background: 'none',
-        hintFacelets: 'none',
-        experimentalDragInput: 'none',
-        experimentalSetupAnchor: 'end',
-        alg: randomAlg(steps),
-        visualization: 'PG3D',
-        controlPanel: 'none',
-        cameraLongitude: 90,
-    }));
+    const [twisty, setTwisty] = useState();
     const twistyRef = useRef(null);
     useEffect(() => {
         var _a;
-        if (twisty) {
-            twisty.experimentalModel.timeRange.get().then((e) => setTimeRange(e));
-            (_a = twistyRef.current) === null || _a === void 0 ? void 0 : _a.appendChild(twisty);
-        }
-    }, [twisty]);
+        const twistyTemp = new TP({
+            background: 'none',
+            hintFacelets: 'none',
+            experimentalDragInput: 'none',
+            experimentalSetupAnchor: 'end',
+            alg: randomAlg(steps),
+            visualization: 'PG3D',
+            controlPanel: 'none',
+        });
+        twistyTemp.experimentalModel.timeRange.get().then((e) => setTimeRange(e));
+        (_a = twistyRef.current) === null || _a === void 0 ? void 0 : _a.appendChild(twistyTemp);
+        setTwisty(twistyTemp);
+    }, []);
     useEffect(() => {
         if (twisty) {
             twisty.experimentalModel.timestampRequest.set((timeRange.end * percentage) / 100);
